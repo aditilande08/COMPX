@@ -1,0 +1,52 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Company {
+  id            Int            @id @default(autoincrement())
+  name          String         @unique
+  industry      String
+  website       String         @default("")
+  logoUrl       String         @default("")
+  hq            String         @default("")
+  size          String         @default("")
+  salaries      Salary[]
+  levelMappings LevelMapping[]
+  createdAt     DateTime       @default(now())
+}
+
+model Salary {
+  id        Int      @id @default(autoincrement())
+  company   Company  @relation(fields: [companyId], references: [id])
+  companyId Int
+  role      String
+  level     String
+  location  String
+  base      Int
+  bonus     Int      @default(0)
+  stock     Int      @default(0)
+  currency  String   @default("INR")
+  yoe       Int      @default(0)
+  verified  Boolean  @default(false)
+  createdAt DateTime @default(now())
+}
+
+// Core differentiator: maps company-specific levels to a normalized scale
+// e.g. Google L3 = normalizedLevel 3, Microsoft SDE1 (59) = normalizedLevel 3
+// This enables apples-to-apples comparison across companies
+model LevelMapping {
+  id              Int     @id @default(autoincrement())
+  company         Company @relation(fields: [companyId], references: [id])
+  companyId       Int
+  companyLevel    String  // e.g. "L3", "SDE1", "E3", "59"
+  normalizedLevel Int     // 1-10 scale for cross-company comparison
+  title           String  // e.g. "Software Engineer II"
+  seniorityLabel  String  // e.g. "Junior", "Mid", "Senior", "Staff", "Principal"
+
+  @@unique([companyId, companyLevel])
+}
