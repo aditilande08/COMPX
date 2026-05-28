@@ -1,8 +1,7 @@
 # CompX — Compensation Intelligence Platform
 
 A full-stack compensation intelligence platform focused on structured, comparable salary data across tech companies. Built for the AI Software Engineer Internship assignment.
-
-**Live URL:** _(deploy pending)_
+**Live URL:** https://compx-tawny.vercel.app/
 
 ## What This Is
 
